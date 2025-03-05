@@ -17,7 +17,7 @@ app = FastAPI()
 # Autoriser toutes les origines, méthodes et en-têtes (à adapter si besoin) pour eviter cors
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://localhost:8000"],  # Remplacez "*" par ["http://localhost:8000"] pour plus de sécurité
+    allow_origins=["https://https://fastapi-3-4hte.onrender.com/predict/"],  # Remplacez "*" par ["http://localhost:8000"] pour plus de sécurité
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
