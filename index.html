@@ -159,7 +159,7 @@
             formData[key] = parseFloat(document.getElementById(key).value);
           }
 
-          fetch("http://localhost:8000/predict/", {
+          fetch("https://fastapi-3-4hte.onrender.com/predict", {
             method: "POST",
             headers: {
               "Content-Type": "application/json",
