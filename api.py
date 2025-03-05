@@ -1,44 +1,44 @@
-#Starlette (Pour la gestion des requetes) et Pydantic(pour la validation des données)
-#les annotations python (@app.get() , @app.post()) pour definir les routes
-
-
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 import joblib
 import pandas as pd
- 
-# Charger le modèle
+
+# Load the ML model
 model = joblib.load("LightGBM_best_model.pkl")
- 
-# Créer une instance FastAPI
+
+# Create FastAPI instance
 app = FastAPI()
- 
- 
-# Autoriser toutes les origines, méthodes et en-têtes (à adapter si besoin) pour eviter cors
+
+# Enable CORS to allow frontend requests
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["https://https://fastapi-3-4hte.onrender.com/predict/"],  # Remplacez "*" par ["http://localhost:8000"] pour plus de sécurité
+    allow_origins=["*"],  # Replace with frontend domain for security
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
 )
- 
-# Définition de la route principale
+
+# Root route
 @app.get("/")
 def home():
     return {"message": "API de prédiction des admissions IRA"}
- 
-# Route pour effectuer une prédiction
+
+# Prediction route
 @app.post("/predict/")
 def predict(data: dict):
     try:
-        # Convertir les données en DataFrame
+        print("🔍 Received Data:", data)  # Debugging
+
+        # Convert input data into DataFrame
         df = pd.DataFrame([data])
-       
-        # Faire la prédiction
+        print("📝 DataFrame for Prediction:\n", df)
+
+        # Make prediction
         prediction = model.predict(df)
-       
+        print("✅ Prediction Result:", prediction[0])
+
         return {"prediction_ira": int(prediction[0])}
    
     except Exception as e:
+        print("❌ Error in Prediction:", str(e))
         return {"error": str(e)}
