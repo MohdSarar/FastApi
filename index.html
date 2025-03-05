@@ -94,7 +94,12 @@
         <pre id="result" class="p-3 bg-dark text-light border rounded"></pre>
       </div>
     </div>
+    
     <script>
+      // 1️⃣ Define the API URL (Update if necessary)
+      const API_URL = "https://fastapi-3-4hte.onrender.com/predict/";
+
+      // 2️⃣ Define the expected input fields with default values
       const fields = {
         avg_temperature_avg: 9.5,
         avg_temperature_max: 14.8,
@@ -126,6 +131,7 @@
         SYM24: 49,
       };
 
+      // 3️⃣ Dynamically create input fields
       const inputFieldsDiv = document.getElementById("inputFields");
       for (const key in fields) {
         const div = document.createElement("div");
@@ -149,36 +155,40 @@
         inputFieldsDiv.appendChild(div);
       }
 
-      document
-        .getElementById("predictionForm")
-        .addEventListener("submit", function (event) {
-          event.preventDefault();
+      // 4️⃣ Handle form submission
+      document.getElementById("predictionForm").addEventListener("submit", function (event) {
+        event.preventDefault();  // Prevent default form submission
 
-          let formData = {};
-          for (const key in fields) {
-            formData[key] = parseFloat(document.getElementById(key).value);
-          }
+        let formData = {};
+        for (const key in fields) {
+          formData[key] = parseFloat(document.getElementById(key).value);
+        }
 
-          fetch("https://fastapi-3-4hte.onrender.com/predict", {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json",
-            },
-            body: JSON.stringify(formData),
+        console.log("📤 Sending data to API:", formData);  // Debugging log
+
+        // 5️⃣ Send request to FastAPI backend
+        fetch(API_URL, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(formData),
+        })
+          .then((response) => {
+            if (!response.ok) {
+              throw new Error(`Server error: ${response.status} ${response.statusText}`);
+            }
+            return response.json();
           })
-            .then((response) => response.json())
-            .then((data) => {
-              document.getElementById("result").textContent = JSON.stringify(
-                data,
-                null,
-                2
-              );
-            })
-            .catch((error) => {
-              document.getElementById("result").textContent =
-                "Erreur : " + error;
-            });
-        });
+          .then((data) => {
+            console.log("✅ API Response:", data);  // Debugging log
+            document.getElementById("result").textContent = JSON.stringify(data, null, 2);
+          })
+          .catch((error) => {
+            console.error("❌ Fetch Error:", error);  // Debugging log
+            document.getElementById("result").textContent = "Erreur : " + error.message;
+          });
+      });
     </script>
   </body>
 </html>
